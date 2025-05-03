@@ -1,0 +1,33 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: config-service
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/DiigJoy/config_tienda_len.git
+          default-label: main # o master, según tu rama principal
+          search-paths: '{application}' # Busca en carpetas con nombre del servicio
+          clone-on-start: true
+          timeout: 10
+  security:
+    user:
+      name: admin
+      password: admin123 # Cambiar en producción
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    org.springframework.cloud: DEBUG
+    org.springframework.security: DEBUG

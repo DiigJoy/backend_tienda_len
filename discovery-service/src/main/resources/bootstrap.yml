@@ -1,0 +1,12 @@
+# discovery-service/src/main/resources/bootstrap.yml
+spring:
+  application:
+    name: discovery-service
+  cloud:
+    config:
+      uri: http://localhost:8888
+      username: admin
+      password: ${CONFIG_PASSWORD:admin123}
+      fail-fast: false # Permite iniciar aunque Config Server no esté disponible
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
