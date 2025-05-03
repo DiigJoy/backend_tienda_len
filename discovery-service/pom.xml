@@ -12,7 +12,6 @@
     </parent>
     
     <artifactId>discovery-service</artifactId>
-    <n>discovery-service</n>
     <description>Service Discovery with Eureka</description>
     
     <dependencies>
@@ -27,7 +26,10 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
         </dependency>
-        
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
         <!-- Seguridad básica -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

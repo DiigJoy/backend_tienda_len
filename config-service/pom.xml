@@ -12,7 +12,6 @@
     </parent>
     
     <artifactId>config-service</artifactId>
-    <n>config-service</n>
     <description>Servicio para configuración centralizada</description>
     
     <dependencies>
