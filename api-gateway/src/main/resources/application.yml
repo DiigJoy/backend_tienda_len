@@ -1,0 +1,137 @@
+server:
+  port: 8080
+  error:
+    include-message: always
+    include-binding-errors: always
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      mvc:
+        routes:
+          # Auth Service
+          - id: auth-service
+            uri: lb://auth-service
+            predicates:
+              - Path=/auth/**
+            filters:
+              - RewritePath=/auth/(?<segment>.*), /${segment}
+          
+          # Usuario Service
+          - id: usuario-service
+            uri: lb://usuario-service
+            predicates:
+              - Path=/api/usuarios/**
+            filters:
+              - name: AuthenticationFilter
+              - name: RateLimiterFilter
+                args:
+                  rate: 10
+                  period: 1s
+          
+          # Producto Service
+          - id: producto-service
+            uri: lb://producto-service
+            predicates:
+              - Path=/api/productos/**
+            filters:
+              - name: AuthenticationFilter
+          
+          # Pedidos Service
+          - id: pedidos-service
+            uri: lb://pedidos-service
+            predicates:
+              - Path=/api/pedidos/**
+            filters:
+              - name: AuthenticationFilter
+          
+          # Pagos Service
+          - id: pagos-service
+            uri: lb://pagos-service
+            predicates:
+              - Path=/api/pagos/**
+            filters:
+              - name: AuthenticationFilter
+          
+          # Notificaciones Service
+          - id: notificaciones-service
+            uri: lb://notificaciones-service
+            predicates:
+              - Path=/api/notificaciones/**
+            filters:
+              - name: AuthenticationFilter
+          
+          # Busqueda Service
+          - id: busqueda-service
+            uri: lb://busqueda-service
+            predicates:
+              - Path=/api/busqueda/**
+          
+          # Stats Service
+          - id: stats-service
+            uri: lb://stats-service
+            predicates:
+              - Path=/api/stats/**
+            filters:
+              - name: AuthenticationFilter
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://admin:${EUREKA_PASSWORD:admin123}@localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+
+# Redis Configuration - Cambiado a formato correcto
+spring:
+  redis:
+    host: localhost
+    port: 6379
+    timeout: 60000
+
+# Actuator endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+
+# JWT Configuration - DEBE coincidir con auth-service
+jwt:
+  secret: ${JWT_SECRET:tu-secreto-jwt-por-defecto}
+  expiration: 86400000
+
+# Resilience4j Circuit Breaker
+resilience4j:
+  circuitbreaker:
+    instances:
+      default:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 5s
+        failureRateThreshold: 50
+
+# OpenAPI documentation
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+
+# Logging
+logging:
+  level:
+    com.tienda.len: DEBUG
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.security: DEBUG

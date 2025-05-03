@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/auth_db_dev
+    username: postgres
+    password: 12345678
+
+logging:
+  level:
+    com.tienda: DEBUG
